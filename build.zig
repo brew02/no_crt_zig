@@ -27,14 +27,11 @@ pub fn build(b: *std.Build) void {
         .root_module = exe_mod,
     });
 
-    exe.addCSourceFile(.{
-        .file = b.path("src/main.c"),
-    });
-
     exe.linkSystemLibrary("kernel32");
     exe.linkSystemLibrary("user32");
 
-    std.debug.print("{s}\n", .{b.graph.zig_exe});
+    var flags = std.ArrayList([]const u8).init(b.allocator);
+
     if (std.fs.path.dirname(b.graph.zig_exe)) |zig_dir| {
         const paths = [_][]const u8{
             zig_dir,
@@ -43,19 +40,14 @@ pub fn build(b: *std.Build) void {
             "include",
             "any-windows-any",
         };
+
         const lib_dir = std.fs.path.join(b.allocator, &paths) catch @panic("Out of memory");
         defer b.allocator.free(lib_dir);
-        std.debug.print("{s}\n", .{zig_dir});
-        std.debug.print("{s}\n", .{lib_dir});
 
-        const build_dir = b.pathFromRoot("build");
-        std.debug.print("{s}\n", .{build_dir});
-        exe.addIncludePath(b.path("build"));
-
-        // This currently doesn't work, probably need to
-        // convert to WTF-8
-        //std.fs.symLinkAbsolute(lib_dir, build_dir, .{ .is_directory = true }) catch @panic("Failed to create symlink");
+        flags.append(b.fmt("-I{s}", .{lib_dir})) catch @panic("Append failed");
     }
+
+    exe.addCSourceFile(.{ .file = b.path("src/main.c"), .flags = flags.toOwnedSlice() catch @panic("No owned slice") });
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
