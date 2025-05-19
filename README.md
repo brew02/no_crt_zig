@@ -1,4 +1,4 @@
-# CRT-less C Windows Applications with Zig Build System
+# CRT-less C Windows Executables with Zig Build System
 
 ![Zig: 0.14.0](https://img.shields.io/badge/Zig%20Version-0.14.0-brightgreen.svg)
 
