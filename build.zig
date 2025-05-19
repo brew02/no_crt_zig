@@ -25,7 +25,6 @@ pub fn build(b: *std.Build) void {
     exe.linkSystemLibrary("user32");
 
     var flags = std.ArrayList([]const u8).init(b.allocator);
-
     if (std.fs.path.dirname(b.graph.zig_exe)) |zig_dir| {
         const paths = [_][]const u8{
             zig_dir,
@@ -41,9 +40,12 @@ pub fn build(b: *std.Build) void {
         // Adding system include path for Windows header files
         // (Allows for #include <windows.h> and other includes)
         flags.append(b.fmt("-I{s}", .{lib_dir})) catch @panic("Append failed");
+    } else {
+        @panic("zig.exe has no directory");
     }
 
     exe.addCSourceFile(.{ .file = b.path("src/main.c"), .flags = flags.toOwnedSlice() catch @panic("No owned slice") });
+    exe.entry = .{ .symbol_name = "test" };
 
     b.installArtifact(exe);
 
