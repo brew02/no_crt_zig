@@ -8,7 +8,7 @@ Recently I found it necessary to remove the C Run-Time (CRT) from an executable 
 
 The first few lines of the `build.zig` file are pretty standard. The first two notable lines are the following:
 
-```
+```zig
 .link_libc = false,
 .strip = is_release,
 ```
@@ -19,7 +19,7 @@ The second line is saying that if we are in release mode, we want to strip debug
 
 The next interesting line is the following:
 
-```
+```zig
 exe.linkSystemLibrary("user32");
 ```
 
@@ -27,7 +27,7 @@ Fortunately for us, Zig makes it very easy to include system libraries as it com
 
 Unfortunately, we are only about halfway from solving our problem. At this point it would be possible to do the following in `main.c`:
 
-```
+```c
 extern int MessageBoxA(void*, const char*, const char*, unsigned int);
 
 int wWinMainCRTStartup() {
@@ -40,7 +40,7 @@ While this will do what we want, it can become tedious to manually define each s
 
 To be able to use these header files within our C files, we need to make it known that the path containing such header files should be searched. To do this, we write the following:
 
-```
+```zig
 var flags = std.ArrayList([]const u8).init(b.allocator);
 if (std.fs.path.dirname(b.graph.zig_exe)) |zig_dir| {
     const paths = [_][]const u8{
@@ -72,7 +72,7 @@ We can then use this path as a flag to tell the C compiler where it can search f
 
 The final line of interest is the following:
 
-```
+```zig
 exe.entry = .{ .symbol_name = "test" };
 ```
 
