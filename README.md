@@ -82,9 +82,9 @@ At this point we have combined all of the necessary components to effectively re
 
 ## Notes
 
-<sup>1</sup>This example does **not** show how to pass arguments to CRT-less executables as this is completely normal behaviour, but it is possible to get arguments using `__p___argv` and `__p___argc` from `ucrtbase.dll`.
+<sup>1</sup> This example does **not** show how to pass arguments to CRT-less executables as this is completely normal behaviour, but it is possible to get arguments using `__p___argv` and `__p___argc` from `ucrtbase.dll`.
 
-<sup>2</sup>To find which library needs to be linked, it is recommended to find the function on [MSDN](https://learn.microsoft.com/en-us/windows/win32/api/) and use the "Requirements" section.
+<sup>2</sup> To find which library needs to be linked, it is recommended to find the function on [MSDN](https://learn.microsoft.com/en-us/windows/win32/api/) and use the "Requirements" section.
 
 <sup>3</sup> The `-isystem` flag is used rather than the `-I` flag so that warnings are not generated for included system headers.
 
