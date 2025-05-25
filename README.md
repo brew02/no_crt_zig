@@ -68,7 +68,7 @@ This root directory that contains `zig.exe` also contains a sub-directory called
 
 We then join these strings together to form a full path using the `std.fs.path.join` function.
 
-We can then use this path as a flag to tell the C compiler where it can search for the header files that we are including in `<>`. Since Zig currently uses Clang as a compiler backend for C and C++ code, we can do this by using the `-isystem` flag<sup>[3](#notes)</sup>. We append this flag to our `ArrayList` of flags and use those flags (just one in this case) when we add our C source file as part of the compilation process.
+We can then use this path as a flag to tell the C compiler where it can search for the header files that we are including in `<>`. Since Zig currently uses Clang as a compiler backend for C and C++ code, we can do this by using the `-isystem` flag<sup>[3](#notes)</sup>. We append this flag to our `ArrayList` of flags and use those flags when we add our C source file as part of the compilation process.
 
 The final line of interest is the following:
 
