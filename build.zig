@@ -39,10 +39,14 @@ pub fn build(b: *std.Build) void {
 
         // Adding system include path for Windows header files
         // (Allows for #include <windows.h> and other includes)
-        flags.append(b.fmt("-I{s}", .{lib_dir})) catch @panic("Append failed");
+        flags.append(b.fmt("-isystem{s}", .{lib_dir})) catch @panic("Append failed");
     } else {
         @panic("zig.exe has no directory");
     }
+
+    // Disable sanitization so that UB
+    // sanitization code isn't generated.
+    // flags.append("-fno-sanitize=undefined") catch @panic("Append failed");
 
     exe.addCSourceFile(.{ .file = b.path("src/main.c"), .flags = flags.toOwnedSlice() catch @panic("No owned slice") });
     exe.entry = .{ .symbol_name = "test" };
@@ -57,6 +61,11 @@ pub fn build(b: *std.Build) void {
     // functions are called (__p___argv() and __p___argc()
     // in ucrtbase.dll), or if the behaviour of the
     // functions are emulated.
+
+    // Example: zig build run -- arg1 arg2 etc
+    // if (b.args) |args| {
+    //     run_cmd.addArgs(args);
+    // }
 
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);

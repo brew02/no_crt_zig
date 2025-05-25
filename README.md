@@ -54,7 +54,7 @@ if (std.fs.path.dirname(b.graph.zig_exe)) |zig_dir| {
     const lib_dir = std.fs.path.join(b.allocator, &paths) catch @panic("Out of memory");
     defer b.allocator.free(lib_dir);
 
-    flags.append(b.fmt("-I{s}", .{lib_dir})) catch @panic("Append failed");
+    flags.append(b.fmt("-isystem{s}", .{lib_dir})) catch @panic("Append failed");
 } else {
     @panic("zig.exe has no directory");
 }
@@ -68,7 +68,7 @@ This root directory that contains `zig.exe` also contains a sub-directory called
 
 We then join these strings together to form a full path using the `std.fs.path.join` function.
 
-We can then use this path as a flag to tell the C compiler where it can search for the header files that we are including in `<>`. Since Zig currently uses Clang as a compiler backend for C and C++ code, we can do this by using the `-I` flag. We append this flag to our `ArrayList` of flags and use those flags (just one in this case) when we add our C source file as part of the compilation process.
+We can then use this path as a flag to tell the C compiler where it can search for the header files that we are including in `<>`. Since Zig currently uses Clang as a compiler backend for C and C++ code, we can do this by using the `-isystem` flag<sup>[3](#notes)</sup>. We append this flag to our `ArrayList` of flags and use those flags (just one in this case) when we add our C source file as part of the compilation process.
 
 The final line of interest is the following:
 
@@ -85,6 +85,8 @@ At this point we have combined all of the necessary components to effectively re
 <sup>1</sup>This example does **not** show how to pass arguments to CRT-less executables as this is completely normal behaviour, but it is possible to get arguments using `__p___argv` and `__p___argc` from `ucrtbase.dll`.
 
 <sup>2</sup>To find which library needs to be linked, it is recommended to find the function on [MSDN](https://learn.microsoft.com/en-us/windows/win32/api/) and use the "Requirements" section.
+
+<sup>3</sup> The `-isystem` flag is used rather than the `-I` flag so that warnings are not generated for included system headers.
 
 ## More Zig Build Information
 
